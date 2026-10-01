@@ -1,0 +1,150 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CareSync | Smarter Healthcare</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #101010;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px 0;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 950px;
+            text-align: center;
+        }
+
+        .caresync-logo {
+            width: 280px;
+            max-width: 85%;
+            height: auto;
+            object-fit: contain;
+            display: block;
+            margin: 0 auto 15px;
+        }
+
+        .subtitle {
+            color: #bbb;
+            margin-bottom: 40px;
+            letter-spacing: 2px;
+        }
+
+        .portals {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+        }
+
+        .portal {
+            background: #1c1c1c;
+            padding: 35px;
+            border: 1px solid #444;
+            border-radius: 14px;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .portal:hover {
+            transform: translateY(-5px);
+            border-color: #e60000;
+        }
+
+        .portal h2 {
+            color: #ff5555;
+        }
+
+        .portal p {
+            color: #ccc;
+            line-height: 1.7;
+        }
+
+        .portal a {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 13px 25px;
+            background: #e60000;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background 0.2s ease;
+        }
+
+        .portal a:hover {
+            background: #b90000;
+        }
+
+        @media(max-width: 650px) {
+            .portals {
+                grid-template-columns: 1fr;
+            }
+
+            .caresync-logo {
+                width: 230px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <img
+        src="{% static 'clinic/images/caresync-logo.png' %}"
+        alt="CareSync - Smarter Healthcare, Connected Care"
+        class="caresync-logo"
+    >
+
+    <p class="subtitle">
+        SMARTER HEALTHCARE. CONNECTED CARE.
+    </p>
+
+    <div class="portals">
+
+        <div class="portal">
+            <h2>Patient Portal</h2>
+
+            <p>
+                Book appointments, find doctors, check medicine
+                availability and request emergency assistance.
+            </p>
+
+            <a href="{% url 'patient_dashboard' %}">
+                Enter Patient Portal
+            </a>
+        </div>
+
+        <div class="portal">
+            <h2>Doctor Portal</h2>
+
+            <p>
+                Access emergency requests, manage consultations
+                and connect with patients through video calls.
+            </p>
+
+            <a href="{% url 'doctor_login' %}">
+                Doctor Login
+            </a>
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

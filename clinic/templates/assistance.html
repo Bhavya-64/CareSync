@@ -1,0 +1,310 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Medical Assistant | CareSync</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 50%;
+            margin: 50px auto;
+            background-color: #111;
+            padding: 20px;
+            border: 1px solid #f00;
+            border-radius: 8px;
+        }
+
+        h1, h2 {
+            color: #f00;
+            text-align: center;
+        }
+
+        .tagline {
+            text-align: center;
+            color: #aaa;
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        label {
+            font-weight: bold;
+            color: #f00;
+        }
+
+        textarea, select, input[type="checkbox"] {
+            width: 100%;
+            padding: 8px;
+            margin: 10px 0;
+            background-color: #222;
+            color: #fff;
+            border: 1px solid #f00;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #f00;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin: 5px;
+        }
+
+        button:hover {
+            background-color: #c00;
+        }
+
+        .response {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #222;
+            color: #fff;
+            border: 1px solid #f00;
+            border-radius: 5px;
+        }
+
+        .options-container label {
+            margin: 5px 0;
+            display: block;
+        }
+
+        #map {
+            height: 400px;
+            width: 100%;
+            margin-top: 20px;
+            border: 2px solid #f00;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>CareSync</h1>
+
+        <p class="tagline">
+            SMARTER HEALTHCARE. CONNECTED CARE.
+        </p>
+
+        <h2>AI Medical Assistant</h2>
+
+        <p style="text-align: center;">
+            Describe your symptoms and answer a few questions to receive general health guidance.
+        </p>
+
+        <textarea id="problemInput" rows="4"
+            placeholder="Enter your symptoms or health problem here..."></textarea>
+
+        <div id="optionsContainer" class="options-container"></div>
+
+        <button onclick="getResponse()">Get Advice</button>
+
+        <button onclick="searchNearbyHospitals()">Find Nearby Hospitals</button>
+
+        <div id="response" class="response"></div>
+
+        <div id="map"></div>
+
+        <p style="color:#aaa; font-size:12px; margin-top:15px;">
+            This assistant provides general information, not a medical diagnosis.
+            Consult a qualified healthcare professional for medical advice.
+            For life-threatening emergencies in India, call 112.
+        </p>
+
+    </div>
+
+    <script>
+        var currentProblem = null;
+        let map;
+        let service;
+        let infowindow;
+
+        function getResponse() {
+            var problemText = document.getElementById("problemInput").value.toLowerCase();
+            var responseDiv = document.getElementById("response");
+            var optionsContainer = document.getElementById("optionsContainer");
+
+            if (problemText.trim() === "") {
+                responseDiv.innerHTML = "Please describe your problem.";
+                return;
+            }
+
+            if (problemText.includes("fever")) {
+                currentProblem = "fever";
+                showFeverOptions();
+            } else if (problemText.includes("sore throat")) {
+                currentProblem = "soreThroat";
+                showSoreThroatOptions();
+            } else {
+                responseDiv.innerHTML = getMedicalAdvice(problemText);
+                optionsContainer.innerHTML = "";
+            }
+        }
+
+        function showFeverOptions() {
+            var optionsContainer = document.getElementById("optionsContainer");
+
+            optionsContainer.innerHTML = `
+                <label>Fever Severity:</label>
+                <select id="feverSeverity">
+                    <option value="low">Low (99-100.9°F)</option>
+                    <option value="high">High (101°F or higher)</option>
+                </select>
+
+                <label>Duration:</label>
+                <select id="feverDuration">
+                    <option value="yesterday">Since Yesterday</option>
+                    <option value="recent">Within 24 hours</option>
+                </select>
+
+                <button onclick="getSpecificAdvice('fever')">
+                    Get Final Advice
+                </button>
+            `;
+        }
+
+        function showSoreThroatOptions() {
+            var optionsContainer = document.getElementById("optionsContainer");
+
+            optionsContainer.innerHTML = `
+                <label>Sore Throat Symptoms:</label>
+
+                <input type="checkbox" id="burningSensation">
+                <label for="burningSensation">Burning Sensation</label>
+
+                <input type="checkbox" id="painfulSwallowing">
+                <label for="painfulSwallowing">Painful Swallowing</label>
+
+                <input type="checkbox" id="blood">
+                <label for="blood">Blood in Saliva</label>
+
+                <button onclick="getSpecificAdvice('soreThroat')">
+                    Get Final Advice
+                </button>
+            `;
+        }
+
+        function getSpecificAdvice(problem) {
+            var advice = "";
+            var responseDiv = document.getElementById("response");
+
+            if (problem === "fever") {
+                var feverSeverity = document.getElementById("feverSeverity").value;
+                var feverDuration = document.getElementById("feverDuration").value;
+
+                if (feverSeverity === "high") {
+                    advice = (feverDuration === "yesterday")
+                        ? "Seek medical attention for a high fever lasting more than a day."
+                        : "Monitor your temperature and drink plenty of fluids.";
+                } else {
+                    advice = "For a low-grade fever, rest and stay hydrated.";
+                }
+
+            } else if (problem === "soreThroat") {
+                var burningSensation = document.getElementById("burningSensation").checked;
+                var painfulSwallowing = document.getElementById("painfulSwallowing").checked;
+                var blood = document.getElementById("blood").checked;
+
+                if (blood) {
+                    advice = "Seek medical attention immediately for blood in saliva.";
+                } else {
+                    advice = "Gargle with warm salt water and drink warm fluids.";
+
+                    if (burningSensation)
+                        advice += " Avoid spicy foods to reduce irritation.";
+
+                    if (painfulSwallowing)
+                        advice += " Try soothing throat lozenges.";
+                }
+            }
+
+            responseDiv.innerHTML = advice;
+        }
+
+        function getMedicalAdvice(problemText) {
+            if (problemText.includes("cough")) {
+                return "For a mild cough, drink warm fluids and use throat lozenges. If symptoms persist, consult a doctor.";
+            } else if (problemText.includes("headache")) {
+                return "For headaches, rest in a dark room and stay hydrated. Avoid stress and loud noises.";
+            } else {
+                return "We recommend consulting a doctor for personalized medical advice.";
+            }
+        }
+
+        function initMap() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+
+                    const userLocation = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+
+                    map = new google.maps.Map(document.getElementById("map"), {
+                        center: userLocation,
+                        zoom: 14
+                    });
+
+                    new google.maps.Marker({
+                        position: userLocation,
+                        map: map,
+                        title: "Your Location"
+                    });
+
+                }, () => {
+                    alert("Geolocation failed. Please allow location access.");
+                });
+
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+
+        function searchNearbyHospitals() {
+            if (!map) {
+                alert("Map is not loaded yet. Please wait.");
+                return;
+            }
+
+            const request = {
+                location: map.getCenter(),
+                radius: 5000,
+                type: ["hospital"]
+            };
+
+            service = new google.maps.places.PlacesService(map);
+
+            service.nearbySearch(request, (results, status) => {
+                if (status === google.maps.places.PlacesServiceStatus.OK) {
+                    for (let i = 0; i < results.length; i++) {
+                        new google.maps.Marker({
+                            map,
+                            position: results[i].geometry.location,
+                            title: results[i].name
+                        });
+                    }
+                }
+            });
+        }
+    </script>
+
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=GOGGLE_API_KEY&libraries=places&callback=initMap">
+    </script>
+
+</body>
+</html>
+

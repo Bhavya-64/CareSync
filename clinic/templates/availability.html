@@ -1,0 +1,78 @@
+
+<style>
+    .doctors-section {
+        margin-top: 30px;
+        padding: 25px;
+        background: #1c1c1c;
+        border: 1px solid #333;
+        border-radius: 12px;
+        color: white;
+    }
+
+    .doctors-section h3 {
+        color: #ff3030;
+        font-size: 25px;
+        margin-bottom: 20px;
+    }
+
+    .doctor-card {
+        background: #292020;
+        border-left: 4px solid #e60000;
+        padding: 18px;
+        margin-bottom: 15px;
+        border-radius: 8px;
+        transition: 0.3s;
+    }
+
+    .doctor-card:hover {
+        background: #352525;
+        transform: translateY(-3px);
+    }
+
+    .doctor-card h4 {
+        color: white;
+        margin: 0 0 8px;
+        font-size: 18px;
+    }
+
+    .doctor-card p {
+        color: #ccc;
+        margin: 5px 0;
+        font-size: 14px;
+    }
+
+    .doctor-time {
+        color: #63e68c !important;
+        font-weight: bold;
+    }
+</style>
+
+<div class="doctors-section">
+
+    <h3>Available Doctors Today</h3>
+
+    {% for doc in doctors %}
+
+        <div class="doctor-card">
+
+            <h4>Dr. {{ doc.name }}</h4>
+
+            <p>
+                <strong>Specialty:</strong>
+                {{ doc.specialty }}
+            </p>
+
+            <p class="doctor-time">
+                <strong>Available:</strong>
+                {{ doc.available_time }}
+            </p>
+
+        </div>
+
+    {% empty %}
+
+        <p>No doctors are currently available.</p>
+
+    {% endfor %}
+
+</div>

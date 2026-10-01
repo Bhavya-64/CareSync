@@ -1,0 +1,42 @@
+# Python
+
+**pycache**/
+*.py[cod]
+
+# Virtual environments
+
+venv/
+.venv/
+env/
+
+# Database and backups
+
+db.sqlite3
+*.sqlite3
+*.sqlite3-journal
+*.db
+
+# Secrets and environment files
+
+.env
+.env.*
+!.env.example
+
+# Django generated files
+
+staticfiles/
+media/
+
+# Logs and editor files
+
+*.log
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Temporary doctor account setup script
+
+create_doctor_accounts.py
+clinic/doctor_accounts.py
+/doctor_accounts.py

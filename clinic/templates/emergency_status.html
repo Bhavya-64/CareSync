@@ -1,0 +1,173 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency Request Status | Medicare Health Plus</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: Arial, sans-serif;
+            background: #101010;
+            color: white;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 650px;
+            padding: 35px;
+            background: #1c1c1c;
+            border: 1px solid red;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #ff3030;
+        }
+
+        .status {
+            margin: 25px 0;
+            padding: 18px;
+            background: #292020;
+            border-radius: 8px;
+            font-size: 20px;
+        }
+
+        .pending { color: #ffd36b; }
+        .accepted { color: #63e68c; }
+        .rejected { color: #ff7777; }
+        .completed { color: #8bbcff; }
+
+        .details {
+            text-align: left;
+            line-height: 2;
+            color: #ddd;
+        }
+
+        .notice {
+            margin-top: 25px;
+            padding: 15px;
+            background: #292020;
+            border-left: 4px solid red;
+            text-align: left;
+        }
+
+        button, .join-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 13px 22px;
+            background: #e60000;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 15px;
+        }
+
+        .join-button:hover, button:hover {
+            background: #b90000;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Emergency Assistance</h1>
+
+    <p>Your consultation request has been received.</p>
+
+    <div class="status">
+
+        {% if emergency_request.status == 'pending' %}
+
+            <span class="pending">⏳ Waiting for Doctor Approval</span>
+            <p>Your request is waiting for the doctor to respond.</p>
+
+        {% elif emergency_request.status == 'accepted' %}
+
+            <span class="accepted">✓ Request Accepted</span>
+            <p>Your doctor has accepted your consultation request.</p>
+
+        {% elif emergency_request.status == 'rejected' %}
+
+            <span class="rejected">✕ Request Rejected</span>
+            <p>Please contact the clinic to arrange further assistance.</p>
+
+        {% elif emergency_request.status == 'completed' %}
+
+            <span class="completed">✓ Consultation Completed</span>
+            <p>Your consultation has been marked as completed.</p>
+
+        {% endif %}
+
+    </div>
+
+    <div class="details">
+
+        <p>
+            <strong>Patient:</strong>
+            {{ emergency_request.patient_name }}
+        </p>
+
+        <p>
+            <strong>Doctor:</strong>
+            {{ emergency_request.doctor.name|default:"Not assigned" }}
+        </p>
+
+        <p>
+            <strong>Consultation:</strong>
+            {{ emergency_request.get_consultation_type_display }}
+        </p>
+
+        <p>
+            <strong>Request Date:</strong>
+            {{ emergency_request.created_at|date:"d M Y, h:i A" }}
+        </p>
+
+    </div>
+
+    {% if emergency_request.status == 'accepted' %}
+
+        {% if emergency_request.consultation_type == 'video' %}
+
+            <a class="join-button"
+               href="{% url 'patient_consultation_room' emergency_request.room_id %}">
+                Join Video Call
+            </a>
+
+        {% else %}
+
+            <p>Your chat consultation has been accepted.</p>
+
+        {% endif %}
+
+    {% endif %}
+
+    <button onclick="location.reload()">
+        Refresh Status
+    </button>
+
+    <div class="notice">
+        <strong>Emergency Notice:</strong>
+        For life-threatening emergencies in India, call 112 immediately.
+        Do not wait for an online consultation.
+    </div>
+
+</div>
+
+</body>
+</html>

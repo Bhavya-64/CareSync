@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CareSync - Appointment Booking</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 50%;
+            margin: 50px auto;
+            background-color: #111;
+            padding: 25px;
+            border: 1px solid #f00;
+            border-radius: 8px;
+        }
+
+        h1 {
+            color: #f00;
+            text-align: center;
+        }
+
+        label {
+            font-weight: bold;
+            color: #f00;
+            display: block;
+            margin-top: 12px;
+        }
+
+        input,
+        select,
+        button {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 10px;
+            margin: 8px 0 15px;
+            border-radius: 4px;
+        }
+
+        input,
+        select {
+            background-color: #222;
+            color: #fff;
+            border: 1px solid #555;
+        }
+
+        button {
+            background-color: #f00;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #c00;
+        }
+
+        button:disabled {
+            background-color: #555;
+            cursor: not-allowed;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        
+        .error {
+            color: #ff4444;
+            display: none;
+            margin-top: -5px;
+        }
+
+        /* SUCCESS BOX */
+        .success-box {
+            display: none;
+            background-color: #111;
+            border: 2px solid #00ff66;
+            border-radius: 8px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+
+        .success-box h2 {
+            color: #00ff66;
+            text-align: center;
+        }
+
+        .success-box p {
+            font-size: 16px;
+            line-height: 1.7;
+        }
+
+        .success-box strong {
+            color: #f00;
+        }
+
+        .booking-id {
+            text-align: center;
+            color: #00ff66;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .error-box {
+            display: none;
+            background-color: #220000;
+            border: 1px solid #ff0000;
+            color: #ff4444;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+
+        .new-booking {
+            margin-top: 15px;
+            background-color: #333;
+        }
+
+        .new-booking:hover {
+            background-color: #444;
+        }
+
+        .brand-name {
+    color: #ff3030;
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.brand-tagline {
+    color: #aaaaaa;
+    font-size: 12px;
+    letter-spacing: 2px;
+}
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="logo">
+    <h1 class="brand-name">CareSync</h1>
+    <p class="brand-tagline">SMARTER HEALTHCARE. CONNECTED CARE.</p>
+</div>
+
+    <h1>Appointment Booking - CareSync</h1>
+
+    <!-- ================= BOOKING FORM ================= -->
+
+    <form id="appointmentForm" method="post">
+        {% csrf_token %}
+
+        <label for="email">Email Address:</label>
+
+        <input
+            type="email"
+            id="email"
+            name="email"
+            required
+            placeholder="example@gmail.com"
+        >
+
+        <p class="error" id="emailError">
+    Please enter a valid email address.
+        </p>
+
+        <label for="date">Date:</label>
+
+        <input
+            type="date"
+            id="date"
+            name="date"
+            required
+        >
+
+
+        <label for="doctor">Doctor:</label>
+
+<select name="doctor" id="doctorSelect" required>
+    <option value="">Select Doctor</option>
+
+    {% for doctor in doctors %}
+        <option value="{{ doctor.id }}"
+                data-specialization="{{ doctor.specialty }}">
+            {{ doctor.name }} - {{ doctor.specialty }}
+        </option>
+    {% empty %}
+        <option value="" disabled>No doctors available</option>
+    {% endfor %}
+</select>
+
+
+        <label for="doctor">Doctor:</label>
+
+        <select
+            name="doctor"
+            id="doctorSelect"
+            required
+        >
+            <option value="">Select Doctor</option>
+
+            <option
+                value="1"
+                data-specialization="General Physician"
+            >
+                Dr. Rajesh Kumar - General Physician
+            </option>
+
+            <option
+                value="2"
+                data-specialization="Gynecologist"
+            >
+                Dr. Anjali Sharma - Gynecologist
+            </option>
+
+            <option
+                value="3"
+                data-specialization="Orthopedist"
+            >
+                Dr. Ravi Verma - Orthopedist
+            </option>
+
+            <option
+                value="4"
+                data-specialization="Cardiologist"
+            >
+                Dr. Priya Menon - Cardiologist
+            </option>
+
+            <option
+                value="5"
+                data-specialization="Dermatologist"
+            >
+                Dr. Suresh Iyer - Dermatologist
+            </option>
+        </select>
+
+
+        <label for="time">Available Time Slots:</label>
+
+        <select
+            name="time"
+            id="timeSlotSelect"
+            required
+        >
+            <option value="">Select Time</option>
+
+            <option value="09:00">09:00 AM</option>
+            <option value="10:00">10:00 AM</option>
+            <option value="11:00">11:00 AM</option>
+            <option value="14:00">02:00 PM</option>
+            <option value="15:00">03:00 PM</option>
+            <option value="16:00">04:00 PM</option>
+        </select>
+
+
+        <button
+            type="submit"
+            id="submitButton"
+        >
+            Book Appointment
+        </button>
+
+    </form>
+
+
+    <!-- ================= ERROR ================= -->
+
+    <div
+        class="error-box"
+        id="errorBox"
+    ></div>
+
+
+    <!-- ================= SUCCESS ================= -->
+
+    <div
+        class="success-box"
+        id="successBox"
+    >
+
+        <h2>✓ Appointment Booked Successfully</h2>
+
+        <div
+            class="booking-id"
+            id="bookingMessage"
+        ></div>
+
+        <p>
+            <strong>Doctor:</strong>
+            <span id="successDoctor"></span>
+        </p>
+
+        <p>
+            <strong>Specialization:</strong>
+            <span id="successSpecialty"></span>
+        </p>
+
+        <p>
+            <strong>Date:</strong>
+            <span id="successDate"></span>
+        </p>
+
+        <p>
+            <strong>Time:</strong>
+            <span id="successTime"></span>
+        </p>
+
+        <button
+            class="new-booking"
+            onclick="newBooking()"
+        >
+            Book Another Appointment
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    /* ============================================
+       EMAIL VALIDATION
+    ============================================ */
+
+    function validateEmail() {
+    const emailField = document.getElementById("email");
+    const errorElement = document.getElementById("emailError");
+
+    const email = emailField.value.trim();
+
+    if (!emailField.checkValidity()) {
+        errorElement.innerText = "Please enter a valid email address.";
+        errorElement.style.display = "block";
+        return false;
+    }
+
+    errorElement.style.display = "none";
+    return true;
+}
+
+
+    /* ============================================
+       FILTER DOCTORS
+    ============================================ */
+
+    function filterDoctors() {
+
+        const specialization =
+            document.getElementById("specialization").value;
+
+        const doctorSelect =
+            document.getElementById("doctorSelect");
+
+        const options =
+            doctorSelect.querySelectorAll("option");
+
+
+        options.forEach(function(option) {
+
+            if (option.value === "") {
+
+                option.style.display = "block";
+
+            }
+
+            else if (
+                option.getAttribute("data-specialization")
+                === specialization
+                ||
+                specialization === ""
+            ) {
+
+                option.style.display = "block";
+
+            }
+
+            else {
+
+                option.style.display = "none";
+
+            }
+
+        });
+
+
+        doctorSelect.value = "";
+
+    }
+
+
+    /* ============================================
+       FORM SUBMISSION
+    ============================================ */
+
+    document
+        .getElementById("appointmentForm")
+        .addEventListener("submit", async function(event) {
+
+            /*
+             IMPORTANT:
+             Prevent normal browser form submission.
+             This stops the JSON response from opening
+             as a separate page.
+            */
+
+            event.preventDefault();
+
+
+            /* Validate email */
+
+            if (!validateEmail()) {
+
+                return;
+
+            }
+
+
+            const form = this;
+
+            const submitButton =
+                document.getElementById("submitButton");
+
+            const errorBox =
+                document.getElementById("errorBox");
+
+            const successBox =
+                document.getElementById("successBox");
+
+
+            /* Hide previous messages */
+
+            errorBox.style.display = "none";
+
+            successBox.style.display = "none";
+
+
+            /* Disable button while processing */
+
+            submitButton.disabled = true;
+
+            submitButton.innerText =
+                "Booking Appointment...";
+
+
+            try {
+
+                /*
+                 FormData automatically includes:
+                 - email
+                 - date
+                 - doctor
+                 - time
+                 - csrf_token
+                */
+
+                const formData =
+                    new FormData(form);
+
+
+                /*
+                 Send request to the same Django URL.
+                */
+
+                const response =
+                    await fetch(
+                        window.location.href,
+                        {
+                            method: "POST",
+
+                            body: formData,
+
+                            headers: {
+                                "X-Requested-With":
+                                    "XMLHttpRequest"
+                            }
+                        }
+                    );
+
+
+                /*
+                 Convert Django JSON response.
+                */
+
+                const data =
+                    await response.json();
+
+
+                /* ====================================
+                   SUCCESS
+                ==================================== */
+
+                if (
+                    response.ok &&
+                    data.status === "success"
+                ) {
+
+                    document
+                        .getElementById("successDoctor")
+                        .innerText =
+                        data.doctor;
+
+
+                    document
+                        .getElementById("successSpecialty")
+                        .innerText =
+                        data.specialty;
+
+
+                    document
+                        .getElementById("successDate")
+                        .innerText =
+                        data.date;
+
+
+                    document
+                        .getElementById("successTime")
+                        .innerText =
+                        data.time;
+
+
+                    document
+                        .getElementById("bookingMessage")
+                        .innerText =
+                        data.message;
+
+
+                    /* Hide form */
+
+                    form.style.display = "none";
+
+
+                    /* Show confirmation */
+
+                    successBox.style.display =
+                        "block";
+
+                }
+
+
+                /* ====================================
+                   ERROR
+                ==================================== */
+
+                else {
+
+                    errorBox.innerText =
+                        data.message ||
+                        "Unable to book the appointment.";
+
+                    errorBox.style.display =
+                        "block";
+
+                }
+
+            }
+
+
+            catch (error) {
+
+                console.error(error);
+
+                errorBox.innerText =
+                    "Something went wrong while booking the appointment. Please try again.";
+
+                errorBox.style.display =
+                    "block";
+
+            }
+
+
+            finally {
+
+                submitButton.disabled = false;
+
+                submitButton.innerText =
+                    "Book Appointment";
+
+            }
+
+        });
+
+
+    /* ============================================
+       NEW BOOKING
+    ============================================ */
+
+    function newBooking() {
+
+        const form =
+            document.getElementById("appointmentForm");
+
+        const successBox =
+            document.getElementById("successBox");
+
+        const errorBox =
+            document.getElementById("errorBox");
+
+
+        form.reset();
+
+        document
+            .getElementById("doctorSelect")
+            .value = "";
+
+
+        errorBox.style.display =
+            "none";
+
+        successBox.style.display =
+            "none";
+
+        form.style.display =
+            "block";
+
+    }
+
+</script>
+
+</body>
+</html>

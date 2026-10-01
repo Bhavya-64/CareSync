@@ -1,0 +1,72 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Video Consultation | CareSync</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #101827;
+            color: white;
+        }
+
+        .header {
+            padding: 15px 25px;
+            background: #1e293b;
+        }
+
+        .header h2 {
+            margin: 0;
+            color: #ff3030;
+        }
+
+        .tagline {
+            color: #aaa;
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        .meeting-container {
+            padding: 15px;
+        }
+
+        .meeting {
+            width: 100%;
+            height: 80vh;
+            border: none;
+            border-radius: 10px;
+            background: white;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <h2>CareSync - Video Consultation</h2>
+
+        <p class="tagline">SMARTER HEALTHCARE. CONNECTED CARE.</p>
+
+        <p>Participant: {{ display_name }}</p>
+        <p>Role: {{ role|title }}</p>
+    </div>
+
+    <div class="meeting-container">
+
+        <iframe
+            class="meeting"
+            src="https://meet.jit.si/CareSync{{ emergency_request.room_id.hex }}"
+            allow="camera; microphone; fullscreen; display-capture; autoplay"
+            allowfullscreen>
+        </iframe>
+
+    </div>
+
+</body>
+</html>
+```

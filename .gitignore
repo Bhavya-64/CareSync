@@ -1,0 +1,15 @@
+﻿__pycache__/
+*.py[cod]
+venv/
+.venv/
+db.sqlite3
+*.sqlite3
+*.db
+.env
+.env.*
+staticfiles/
+media/
+*.log
+.vscode/
+.idea/
+create_doctor_accounts.py

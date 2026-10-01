@@ -1,0 +1,172 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Emergency Consultation | CareSync</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #101010;
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: #1c1c1c;
+            padding: 35px;
+            border: 1px solid #333;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 550px;
+        }
+
+        h1 {
+            color: #ff3030;
+            text-align: center;
+        }
+
+        .tagline {
+            color: #aaa;
+            text-align: center;
+            font-size: 12px;
+            letter-spacing: 1px;
+            margin-bottom: 25px;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            box-sizing: border-box;
+            border-radius: 5px;
+            border: 1px solid #444;
+            background: #292929;
+            color: white;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        label {
+            display: block;
+            margin-top: 12px;
+        }
+
+        button {
+            background: #e60000;
+            color: white;
+            padding: 13px 22px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            font-size: 15px;
+        }
+
+        button:hover {
+            background: #b90000;
+        }
+
+        .error {
+            color: #ff7777;
+        }
+
+        .emergency-notice {
+            margin-top: 20px;
+            padding: 12px;
+            background: #292020;
+            border-left: 4px solid red;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>CareSync</h1>
+
+    <p class="tagline">
+        SMARTER HEALTHCARE. CONNECTED CARE.
+    </p>
+
+    <h2>Emergency Assistance</h2>
+
+    <p>Submit your request to connect with an available doctor.</p>
+
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <input type="text"
+               name="patient_name"
+               placeholder="Patient Name"
+               required>
+
+        <input type="email"
+               name="patient_email"
+               placeholder="Email Address"
+               required>
+
+        <input type="tel"
+               name="patient_phone"
+               placeholder="Phone Number">
+
+        <textarea name="symptoms"
+                  placeholder="Describe your symptoms"
+                  required></textarea>
+
+        <label>Select Doctor</label>
+
+        <select name="doctor" required>
+            <option value="">Choose a doctor</option>
+
+            {% for doctor in doctors %}
+                <option value="{{ doctor.id }}">
+                    Dr. {{ doctor.name }} - {{ doctor.specialty }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <label>Consultation Type</label>
+
+        <select name="consultation_type" required>
+            <option value="video">Video Consultation</option>
+            <option value="chat">Chat Consultation</option>
+        </select>
+
+        <button type="submit">
+            Send Emergency Request
+        </button>
+    </form>
+
+    <div class="emergency-notice">
+        <strong>Emergency Notice:</strong>
+        For life-threatening emergencies in India, call 112.
+        Do not wait for an online consultation.
+    </div>
+
+</div>
+
+</body>
+</html>
+```

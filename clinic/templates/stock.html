@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medicine Stock   | CareSync</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 60%;
+            margin: 50px auto;
+            background-color: #111;
+            padding: 20px;
+            border: 1px solid #f00;
+            border-radius: 8px;
+            text-align: center;
+        }
+        h1 {
+            color: #f00;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #f00;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #222;
+        }
+        .out-of-stock {
+            color: #f00;
+            font-weight: bold;
+        }
+        button {
+            background-color: #f00;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #c00;
+        }
+        #map {
+            height: 400px;
+            width: 100%;
+            margin-top: 20px;
+            border: 2px solid #f00;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Medicine Stock Availability</h1>
+        <table>
+            <tr>
+                <th>Medicine Name</th>
+                <th>Stock</th>
+                <th>Expiry Date</th>
+            </tr>
+            {% for medicine in medicines %}
+            <tr>
+                <td>{{ medicine.name }}</td>
+                <td class="{% if medicine.stock == 0 %}out-of-stock{% endif %}">
+                    {% if medicine.stock > 0 %}
+                        {{ medicine.stock }}
+                    {% else %}
+                        Out of Stock
+                    {% endif %}
+                </td>
+                <td>{{ medicine.expiry_date }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <button onclick="searchNearbyPharmacy()">Find Nearby Pharmacies</button>
+
+        <div id="map"></div>
+    </div>
+
+    <script>
+        let map;
+        let service;
+        let infowindow;
+
+        function initMap() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    const userLocation = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+
+                    map = new google.maps.Map(document.getElementById("map"), {
+                        center: userLocation,
+                        zoom: 14
+                    });
+
+                    new google.maps.Marker({
+                        position: userLocation,
+                        map: map,
+                        title: "Your Location"
+                    });
+                }, () => {
+                    alert("Geolocation failed. Please allow location access.");
+                });
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+
+        function searchNearbyPharmacy() {
+            if (!map) {
+                alert("Map is not loaded yet. Please wait.");
+                return;
+            }
+
+            const request = {
+                location: map.getCenter(),
+                radius: 5000,
+                type: ["pharmacy"]
+            };
+
+            service = new google.maps.places.PlacesService(map);
+            service.nearbySearch(request, (results, status) => {
+                if (status === google.maps.places.PlacesServiceStatus.OK) {
+                    for (let i = 0; i < results.length; i++) {
+                        createMarker(results[i]);
+                    }
+
+                    alert("Nearby pharmacies found.");
+                } else {
+                    alert("No pharmacies found nearby.");
+                }
+            });
+        }
+
+        function createMarker(place) {
+            if (!place.geometry || !place.geometry.location) return;
+
+            const marker = new google.maps.Marker({
+                map,
+                position: place.geometry.location,
+                title: place.name
+            });
+
+            google.maps.event.addListener(marker, "click", () => {
+                infowindow = new google.maps.InfoWindow({
+                    content: `<strong>${place.name}</strong><br>${place.vicinity}`
+                });
+                infowindow.open(map, marker);
+            });
+        }
+    </script>
+
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=GOGGLE_API_KEY&libraries=places&callback=initMap">
+    </script>
+
+</body>
+</html>
